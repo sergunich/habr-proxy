@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 TM_CHAR = '™'
 
+
 @get('<path:path>')
 def proxy(path):
     qs = request.query_string
@@ -36,9 +37,9 @@ def proxy(path):
 def trademarketize(tag):
     for string in tag.find_all(string=True):
         text = str(string)
-        text = re.sub(r'(?<!\w)' # must not be letter (lookbehind)
-                      r'(?P<target>\w{6})' # must be 6 letter long
-                      r'(?!\w)' # must not be letter (lookahead)
+        text = re.sub(r'(?<!\w)'  # must not be letter (lookbehind)
+                      r'(?P<target>\w{6})'  # must be 6 letter long
+                      r'(?!\w)'  # must not be letter (lookahead)
                       r'', '\g<target>'+TM_CHAR, text)
         string.replace_with(text)
 
