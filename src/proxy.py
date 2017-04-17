@@ -18,7 +18,7 @@ def proxy(path):
         is_html = response.headers['Content-Type'].startswith('text/html')
 
     if is_html:
-        soup = BeautifulSoup(content, 'html.parser')
+        soup = BeautifulSoup(content, 'html5lib')
 
         for a in soup.find_all('a', href=re.compile('https://habrahabr.ru')):
             a['href'] = (a['href'] or '').replace('https://habrahabr.ru', '')

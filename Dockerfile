@@ -1,6 +1,6 @@
 FROM python:3.5.3-alpine
 
-RUN pip install pudb bottle beautifulsoup4 pylint
+RUN pip install pudb bottle beautifulsoup4 html5lib pylint
 RUN pip install pycodestyle
 
 COPY /src /src
