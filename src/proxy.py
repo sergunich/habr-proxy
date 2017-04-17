@@ -1,7 +1,8 @@
-from urllib.request import urlopen
 import re
+from urllib.request import urlopen
 
 from bottle import request, get, run, debug
+from bs4.element import Comment
 from bs4 import BeautifulSoup
 
 TM_CHAR = '™'
@@ -23,10 +24,7 @@ def proxy(path):
         for a in soup.find_all('a', href=re.compile('https://habrahabr.ru')):
             a['href'] = (a['href'] or '').replace('https://habrahabr.ru', '')
 
-        article = (soup.select('div.content') or [None])[0]
-        comments = (soup.select('ul#comments-list') or [None])[0]
-        for tag in filter(bool, (article, comments,)):
-            trademarketize(tag)
+        trademarketize(soup.find('body'))
 
         content = str(soup)
 
@@ -35,6 +33,9 @@ def proxy(path):
 
 def trademarketize(tag):
     for string in tag.find_all(string=True):
+        if isinstance(string, (Comment,)) or (string.parent.name == 'script'):
+            continue
+
         text = str(string)
         text = re.sub(r'(?<!\w)'  # must not be letter (lookbehind)
                       r'(?P<target>\w{6})'  # must be 6 letter long
