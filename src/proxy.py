@@ -1,7 +1,8 @@
 import re
 from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
 
-from bottle import request, get, run, debug
+from bottle import request, response, get, run, debug
 from bs4.element import Comment
 from bs4 import BeautifulSoup
 
@@ -14,9 +15,18 @@ def proxy(path):
     path_with_qs = path + '?' + qs if qs else path
 
     content, is_html = '', False
-    with urlopen('https://habrahabr.ru'+path_with_qs) as response:
-        content = response.read()
-        is_html = response.headers['Content-Type'].startswith('text/html')
+    try:
+        resp = urlopen('https://habrahabr.ru'+path_with_qs)
+    except HTTPError as e:
+        response.status = e.code
+        content = e.read()
+        is_html = e.headers['Content-Type'].startswith('text/html')
+    except URLError as e:
+        content = ('We failed to reach a server. '
+                   'Reason: {0}'.format(e.reason))
+    else:
+        content = resp.read()
+        is_html = resp.headers['Content-Type'].startswith('text/html')
 
     if is_html:
         soup = BeautifulSoup(content, 'html5lib')
