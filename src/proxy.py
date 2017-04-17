@@ -1,4 +1,3 @@
-from pprint import pprint
 from urllib.request import urlopen
 import re
 
@@ -40,8 +39,9 @@ def trademarketize(tag):
         text = re.sub(r'(?<!\w)'  # must not be letter (lookbehind)
                       r'(?P<target>\w{6})'  # must be 6 letter long
                       r'(?!\w)'  # must not be letter (lookahead)
-                      r'', '\g<target>'+TM_CHAR, text)
+                      r'', r'\g<target>'+TM_CHAR, text)
         string.replace_with(text)
+
 
 if __name__ == "__main__":
     debug(True)

@@ -1,9 +1,12 @@
 FROM python:3.5.3-alpine
 
-RUN pip install pudb bottle beautifulsoup4 pep8
+RUN pip install pudb bottle beautifulsoup4 pylint
+RUN pip install pycodestyle
 
 COPY /src /src
 
-RUN pep8  --show-source --show-pep8 /src/proxy.py
+RUN touch /.pylintrc
+RUN pylint --rcfile=/.pylintrc --disable=C /src/proxy.py || true
+RUN pycodestyle --show-source --show-pep8 /src/proxy.py || true
 
 CMD ["python3", "/src/proxy.py"]
